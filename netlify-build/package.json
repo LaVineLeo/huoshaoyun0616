@@ -1,0 +1,13 @@
+{
+  "name": "sunsetbot-netlify",
+  "version": "1.0.0",
+  "description": "火烧云分析网页 - Netlify部署版本",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'Build completed'"
+  },
+  "dependencies": {},
+  "keywords": ["sunset", "weather", "netlify"],
+  "author": "LaVine",
+  "license": "ISC"
+} 

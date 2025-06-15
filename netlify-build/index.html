@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#ff9933">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>火烧云分析-LaVine</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="logo.png" type="image/png">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <img src="logo.png" alt="火烧云分析" class="logo">
+            <h1>火烧云分析</h1>
+            <p>基于实时数据分析的火烧云预测系统</p>
+        </header>
+        
+        <main>
+            <div class="search-container">
+                <div class="search-row">
+                    <div class="city-search-wrapper">
+                        <label for="city_input" class="search-label">城市</label>
+                        <input list="city_list" class="form-control form-control-lg cyxy-ignore-trs" id="city_input" placeholder="深圳" oninput="update_city_list();">
+                        <datalist id="city_list">
+                            <option value="深圳"></option>
+                            <option value="北京"></option>
+                            <option value="上海"></option>
+                            <option value="广州"></option>
+                            <option value="杭州"></option>
+                        </datalist>
+                    </div>
+                    <div class="time-select-wrapper">
+                        <div class="select-group">
+                            <label for="date-select" class="search-label">日期</label>
+                            <select id="date-select" class="form-control">
+                                <option value="today">今天</option>
+                                <option value="tomorrow">明天</option>
+                            </select>
+                        </div>
+                        <div class="select-group">
+                            <label for="time-type-select" class="search-label">类型</label>
+                            <select id="time-type-select" class="form-control">
+                                <option value="rise">日出</option>
+                                <option value="set" selected>日落</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button id="search-btn">搜索</button>
+                </div>
+            </div>
+            
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="current-data">当前数据</button>
+                <button class="tab-btn" data-tab="history-data">历史记录</button>
+            </div>
+            
+            <div class="tab-content active" id="current-data">
+                <div class="data-container">
+                    <div class="data-row header-row">
+                        <div class="data-cell">参数</div>
+                        <div class="data-cell">数值</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-cell">时间</div>
+                        <div class="data-cell" id="beijing-time">加载中...</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-cell">鲜艳度</div>
+                        <div class="data-cell" id="vividness">加载中...</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-cell">气溶胶</div>
+                        <div class="data-cell" id="aerosol">加载中...</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-cell">不确定性</div>
+                        <div class="data-cell" id="uncertainty">加载中...</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-cell">当前城市</div>
+                        <div class="data-cell" id="current-city">深圳</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-cell">日期</div>
+                        <div class="data-cell" id="current-date">今天</div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-cell">日出/日落</div>
+                        <div class="data-cell" id="time-type">日落</div>
+                    </div>
+                </div>
+                
+                <div class="image-container">
+                    <h3>火烧云预测图</h3>
+                    <div class="image-wrapper">
+                        <img id="sunset-image" src="placeholder.jpg" alt="火烧云预测图" class="sunset-image">
+                    </div>
+                    <p class="image-caption" id="image-caption">加载中...</p>
+                </div>
+                
+                <div class="controls">
+                    <button id="refresh-btn">刷新数据</button>
+                    <button id="save-btn">保存记录</button>
+                    <button id="param-info-btn" class="info-btn">参数说明</button>
+                </div>
+                
+                <div class="status-message" id="status-message"></div>
+            </div>
+            
+            <div class="tab-content" id="history-data">
+                <div class="history-container">
+                    <h3>历史记录</h3>
+                    <div class="history-list" id="history-list">
+                        <p class="no-data">暂无历史数据</p>
+                    </div>
+                    <div class="controls">
+                        <button id="clear-history-btn">清除历史</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 参数说明弹窗 -->
+            <div id="param-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>参数说明</h2>
+                    <div class="param-info">
+                        <p><strong>火烧云鲜艳度≥0.4（中烧）➕AOD≤0.5</strong></p>
+                        
+                        <h3>数值解释</h3>
+                        <p><strong>火烧云鲜艳度</strong>(某种程度上表明火烧云质量)以下几个方面因素:火烧云的持续时间、火烧云的亮度与颜色、火烧云的云量(包括格点云量、云相态与含水量)、火烧云占据本地天空的面积、云底高度、不同层次云层之间的照明与遮挡关系，以及气溶胶光学厚度/大气浑浊度(或者雾)</p>
+                        <ul>
+                            <li>0.001-0.05: 微微烧，或者火烧云云况不典型没有预报出来</li>
+                            <li>0.05~0.2: 小烧，大气很通透的情况下才会比较好看</li>
+                            <li>0.2~0.4: 小烧到中等烧</li>
+                            <li>0.4~0.6: 中等烧，比较值得看的火烧云</li>
+                            <li>0.6~0.8: 中等烧到大烧程度的火烧云</li>
+                            <li>0.8~1.0: 不是很完美的大烧火烧云，例如云量没有最高、大气偏污、持续时间偏短、有低云遮挡等</li>
+                            <li>1.0~1.5: 典型的火烧云大烧</li>
+                            <li>1.5~2.0: 优质大烧，火烧云范围广、云量大(不一定满云量)、颜色明亮、持续时间长，且大气通透</li>
+                            <li>2.0~2.5: 世纪大烧，火烧云范围很广、接近满云量、颜色明亮鲜艳、持续时间长，且大气非常通透</li>
+                        </ul>
+                        
+                        <p><strong>AOD (气溶胶光学厚度/天空浑浊度)</strong>表明了气溶胶颗粒在垂直方向对光线的遮挡和散射效果。当气溶胶光学厚度较大的时候，天空中的光线在到达地面前会被气溶胶明显散射和吸收，导致天空颜色的饱和度与亮度下降，使得天空看起来污浊。</p>
+                        <ul>
+                            <li>0.0~0.1: (如果天气晴朗)高级水晶天，多见于青藏高原</li>
+                            <li>0.1~0.2: (如果天气晴朗)普通水晶天，天空湛蓝</li>
+                            <li>0.2~0.3: (如果天气晴朗)不算水晶天但也有蓝天</li>
+                            <li>0.3~0.4: 普通的天空</li>
+                            <li>0.4~0.6: 天空看起来会有点污</li>
+                            <li>0.6~0.8: 天空会相当的污，地面附近可能有霾</li>
+                            <li>>0.8: 非常污的天空，地面附近可能有比较重的霾</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Created by <a href="https://github.com/LaVineLeo" target="_blank">LaVine - LaVine 的创意工坊</a></p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
