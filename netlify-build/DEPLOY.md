@@ -9,7 +9,9 @@
 1. **打包完成**：此文件夹已包含所有必要文件
 2. **拖拽部署**：将整个 `netlify-build` 文件夹拖拽到 [Netlify](https://app.netlify.com/drop) 
 3. **自动构建**：Netlify会自动识别配置并部署
-4. **验证Functions**：访问`https://your-site-name.netlify.app/.netlify/functions/hello`测试
+4. **验证Functions**：
+   - 基础测试：`https://your-site-name.netlify.app/.netlify/functions/hello`
+   - 🕐 时间校准：`https://your-site-name.netlify.app/.netlify/functions/time-debug`
 
 ### 📁 文件结构
 
@@ -24,7 +26,8 @@ netlify-build/
 ├── DEPLOY.md               # 部署说明
 └── functions/              # Netlify Functions目录
     ├── hello.js            # 测试函数（验证部署）
-    ├── sunset-data.js      # 火烧云数据API（已优化）
+    ├── time-debug.js       # 时间调试函数（中国时间校准）
+    ├── sunset-data.js      # 火烧云数据API（已优化，支持中国时间）
     └── cities.js           # 城市列表API
 ```
 
@@ -49,6 +52,8 @@ netlify-build/
 **最新优化**：
 - ✅ 按照Netlify标准格式重构Functions
 - ✅ 添加测试函数`hello.js`便于验证部署
+- ✅ 🕐 **修正时间处理逻辑，支持中国时间（UTC+8）校准**
+- ✅ 🔍 添加`time-debug.js`用于时间验证
 - ✅ 优化CORS处理和响应格式
 - ✅ 添加esbuild打包器配置
 - ✅ 完全符合Netlify Functions规范
