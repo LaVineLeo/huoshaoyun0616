@@ -1,11 +1,21 @@
 // 时间处理工具函数
 const timeUtils = {
+    // 获取中国时间（UTC+8）
+    getChinaTime() {
+        const now = new Date();
+        // 转换为UTC时间，然后加8小时得到北京时间
+        const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+        const chinaTime = new Date(utc + (8 * 3600000));
+        return chinaTime;
+    },
+
     getToday() {
-        return new Date();
+        return this.getChinaTime();
     },
 
     getTomorrow() {
-        const tomorrow = new Date();
+        const today = this.getChinaTime();
+        const tomorrow = new Date(today);
         tomorrow.setDate(tomorrow.getDate() + 1);
         return tomorrow;
     },
@@ -97,6 +107,11 @@ exports.handler = async (event, context) => {
         const dateInfo = timeUtils.getDateInfo(date);
         const dateStr = dateInfo.formatted;
         
+        // 调试信息：记录当前中国时间
+        const currentChinaTime = timeUtils.getChinaTime();
+        console.log(`当前中国时间: ${currentChinaTime.toISOString()}`);
+        console.log(`查询日期: ${date}, 格式化日期: ${dateStr}`);
+        
         // 初始化数据对象
         let data;
         
@@ -113,7 +128,7 @@ exports.handler = async (event, context) => {
                         tb_event_time: `${dateStr}<br>05:40:28`,
                         tb_quality: "0.075<br>（小烧）",
                         time_type: "rise",
-                        remark: "今日日出",
+                        remark: `今日日出 (${dateStr})`,
                         url: "https://sunsetbot.top/?query_id=869494&intend=select_city&query_city=%E6%B7%B1%E5%9C%B3&event_date=None&event=rise_1&times=None"
                     };
                 } else {
@@ -124,10 +139,10 @@ exports.handler = async (event, context) => {
                         query_id: "869495",
                         status: "ok",
                         tb_aod: "0.298<br>（还不错）",
-                        tb_event_time: `${dateStr}<br>18:45:12`,
+                        tb_event_time: `${dateStr}<br>19:12:36`,
                         tb_quality: "0.142<br>（小烧）",
                         time_type: "set",
-                        remark: "今日日落",
+                        remark: `今日日落 (${dateStr})`,
                         url: "https://sunsetbot.top/?query_id=869495&intend=select_city&query_city=%E6%B7%B1%E5%9C%B3&event_date=None&event=set_1&times=None"
                     };
                 }
@@ -143,7 +158,7 @@ exports.handler = async (event, context) => {
                         tb_event_time: `${dateStr}<br>05:41:15`,
                         tb_quality: "0.089<br>（小烧）",
                         time_type: "rise",
-                        remark: "明日日出"
+                        remark: `明日日出 (${dateStr})`
                     };
                 } else {
                     data = {
@@ -153,10 +168,10 @@ exports.handler = async (event, context) => {
                         query_id: "869497",
                         status: "ok",
                         tb_aod: "0.285<br>（还不错）",
-                        tb_event_time: `${dateStr}<br>18:44:52`,
+                        tb_event_time: `${dateStr}<br>19:13:02`,
                         tb_quality: "0.156<br>（小烧）",
                         time_type: "set",
-                        remark: "明日日落"
+                        remark: `明日日落 (${dateStr})`
                     };
                 }
             }
